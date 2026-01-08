@@ -153,6 +153,9 @@ const App = () => {
   };
   
   const progress = stats.total === 0 ? 0 : Math.round((stats.completed / stats.total) * 100);
+  const progressRadius = 16;
+  const progressCircumference = 2 * Math.PI * progressRadius;
+  const progressOffset = progressCircumference - (progress / 100) * progressCircumference;
 
   // ---------------- Render ----------------
 
@@ -212,37 +215,65 @@ const App = () => {
               </div>
             </div>
             
-            <button 
-              onClick={handleLogout}
-              className="text-slate-400 hover:text-slate-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              title="退出登录"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10">
+                <svg className="w-10 h-10 -rotate-90" viewBox="0 0 40 40">
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r={progressRadius}
+                    stroke="#e5e7eb"
+                    strokeWidth="3"
+                    fill="none"
+                  />
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r={progressRadius}
+                    stroke="#4f46e5"
+                    strokeWidth="3"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeDasharray={progressCircumference}
+                    strokeDashoffset={progressOffset}
+                  />
+                </svg>
+                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-slate-600">
+                  {progress}%
+                </span>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="text-slate-400 hover:text-slate-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="退出登录"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Input Form */}
           <form onSubmit={addTask} className="bg-slate-50 p-3 sm:p-4 rounded-xl border border-slate-200 shadow-inner">
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
               <input
                 type="text"
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
                 placeholder="添加新的待办事项..."
-                className="flex-grow w-full pl-4 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                className="flex-1 min-w-0 pl-4 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
               />
               <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
                 <select 
                   value={category} 
                   onChange={(e) => setCategory(e.target.value)}
-                  className="px-3 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="px-3 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                 >
                   {categories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <select 
                   value={priority} 
                   onChange={(e) => setPriority(e.target.value)}
-                  className="px-3 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="px-3 py-3 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                 >
                   <option value="high">高优</option>
                   <option value="medium">中等</option>
@@ -309,8 +340,8 @@ const App = () => {
           {filteredTasks.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
               <CheckCircle2 className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-              <h3 className="text-slate-900 font-medium">列表空空如也</h3>
-              <p className="text-slate-500 text-sm">云端数据已同步，暂无相关任务</p>
+              <h3 className="text-slate-900 font-medium">太棒了！所有任务已清空🎉</h3>
+              <p className="text-slate-500 text-sm">试着添加一个新任务，或者切换筛选条件</p>
             </div>
           ) : (
             filteredTasks.map(task => (
